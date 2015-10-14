@@ -130,7 +130,7 @@ def run_subset_exp(clf, M, labels,ranges):
     results = []
     for r in ranges:
         tmp_results = [r]
-        tmp_results.append(avg_avg_acc_on_balanced_subset(clf,M,labels,r,5))
+        tmp_results.append(avg_avg_acc_on_balanced_subset(clf,M,labels,r,10))
         results.append(tmp_results)
     return results
     
