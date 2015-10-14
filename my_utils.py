@@ -112,12 +112,21 @@ def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
     for x in range(runs):
         z = rand_set(zeros[0],n/2)
         o = rand_set(ones[0],n/2)
-        t=list(z)+list(o)
+        t = list(z)+list(o)
         skf = StratifiedKFold(labels[t], n_folds=5)
         acc.append(np.average(run_clf(clf,skf,M[t,:],labels[t])))
     return np.average(acc), np.std(acc)
-
-r = [20,50,100,200,400,800,1600]
+    
+def run_subset_exp(clf, M, labels,ranges):
+    results = []
+    for r in ranges:
+        tmp_results = [r]
+        tmp_results.append(avg_avg_acc_on_balanced_subset(clf,M,labels,r,5))
+        results.append(tmp_results)
+    return results
+    
+tmp_ranges = [10,15,20]    
+ranges = [20,50,100,200,400,800,1600]
     
     
     
