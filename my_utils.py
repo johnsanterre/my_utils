@@ -3,6 +3,9 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold
 
+tmp_ranges = [10,20,30,40,50]    
+ranges = [20,50,100,200,400,800,1600]
+
 def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/my_utils/master/my_utils.py'):
     import urllib2; 
     tmp= urllib2.urlopen(f_loc);
@@ -131,8 +134,7 @@ def run_subset_exp(clf, M, labels,ranges):
         results.append(tmp_results)
     return results
     
-tmp_ranges = [10,15,20]    
-ranges = [20,50,100,200,400,800,1600]
+
     
     
     
