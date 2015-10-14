@@ -3,9 +3,9 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold
 
-tmp_ranges = [10,20,30,40,50]    
-ranges = [20,50,100,200,400,800,1600]
-
+low_ranges = [10,20,30,40,50,60,70,80,90,100]    
+mid_ranges = [100,150,200,250,300,350,400,450,500]
+high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
 def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/my_utils/master/my_utils.py'):
     import urllib2; 
     tmp= urllib2.urlopen(f_loc);
