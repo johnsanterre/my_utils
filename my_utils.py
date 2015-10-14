@@ -2,6 +2,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold
+
+def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/my_utils/master/my_utils.py'):
+    import urllib2; 
+    tmp= urllib2.urlopen(f_loc);
+    exec(tmp.read())
+
 def pickle_this(obj, name='cucumber.pickle'):
     import pickle
     with open(name, 'wb') as handle:  pickle.dump(obj, handle)
