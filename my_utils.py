@@ -2,51 +2,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
+
+from sklearn import metrics
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from sklearn.cross_validation import StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, auc, f1_score, precision_score, recall_score, roc_curve
 
 
-
+#Vars
 low_ranges = [10,20,30,40,50,60,70,80,90,100]    
 mid_ranges = [100,150,200,250,300,350,400,450,500]
 high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
+
+
+
+#System level helpers
+def pickle_this(obj, f_loc='cucumber.pickle'):
+    import pickle
+    with open(f_loc, 'wb') as handle:  pickle.dump(obj, handle)
+    return
+def unpickle(f_loc='cucumber.pickle'):
+    import pickle    
+    return pickle.load( open( f_loc,'rb'))
+def run_bash(bashCommand):
+    import subprocess
+    process = subprocess.Popen(bashCommand.split())
+def isfile(f_loc):
+    import os.path
+    return os.path.isfile(f_loc)
 def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/my_utils/master/my_utils.py'):
+    #snake eating itself
     import urllib2; 
     tmp= urllib2.urlopen(f_loc);
     exec(tmp.read())
 
-def pickle_this(obj, name='cucumber.pickle'):
-    import pickle
-    with open(name, 'wb') as handle:  pickle.dump(obj, handle)
-    return
-
-def unpickle(f_loc='cucumber.pickle'):
-    import pickle    
-    return pickle.load( open( f_loc,'rb'))
-
-def run_bash(bashCommand):
-    import subprocess
-    process = subprocess.Popen(bashCommand.split())
-    
-def isfile(f_loc):
-    import os.path
-    return os.path.isfile(f_loc)
-
+#Rick's group fucntions
 def kmc_wrapper(k='-k25', m='-m8', f='-fm', origin='./', out='./NA.res', work='work-dir'):
     return ' '.join(['./kmc',k, m, f, origin, out, work])
-
 def kmc_dump_wrapper(c='-cx0', origin='NA.res', out='./output',):
     return ' '.join(['./kmc_dump', c, origin, out])
-
-
-def get_top_features_and_values(clf, n_top):
-        return ( [ (x,clf.feature_importances_[x]) for
-                x in clf.feature_importances_.argsort()[-n_top:][::-1]])
-
-def inverse_dict(aDict):
-    return {v: k for k, v in aDict.items()}
-        
 def remove_singletons_from_M(M,index):
     singleton_locations = np.where(sum(M[:,]==1))[0]
     good_loc = list(set(range(M.shape[1]))-set(singleton_locations))
@@ -55,13 +51,8 @@ def remove_singletons_from_M(M,index):
     index_out = {}
     for idx, loc in enumerate(good_loc): M_out[:,idx]=M[:,loc]; index_out[idx]=inv_index[loc]
     return M_out, index_out
-
 def make_labels(pos, neg):
     return np.concatenate((np.ones(neg),(np.ones(pos)+np.ones(pos))))
-    
-
-# go thru this
-
 def open_a_fangFang(loc, delim):
     import csv
     with open(loc, 'rb') as f:
@@ -73,34 +64,36 @@ def open_a_fangFang(loc, delim):
         index[x[0]]=idx
         inv_index[idx]=x[0]
     data = np.transpose(np.array([x[1:] for x in data], dtype=(np.int16))) #removes featureID
-    return data, index, inv_index
-
-def get_identicle_value_columns(M):
-    col_ids = []
-    for col_id, row in enumerate(M):
-        value = row[0]
-        if np.all(row==value, axis=1): # 1 for columns
-            col_ids.append(col_id)
-    return col_id
-
-def agreement_fit(data,inv_index,type_one, type_two,count_Yes_No):
-    one = [col_idx for col_idx in range(data.shape[1]) if np.count_nonzero(data[type_one, col_idx])==count_Yes_No[0]]
-    two= [col_idx for col_idx in one if np.count_nonzero(data[type_two,col_idx])==count_Yes_No[1]]
-    return [inv_index[x] for x in two]
-
-def RES_id_from_SUS_id(SUS_ids, total_num_samples):
-    return [x for x in range(total_num_samples) if x not in SUS_ids]
+    M = data[:,1:]
+    labels = data[:,0]
+    return M, labels, index, inv_index
     
-    
+def read_dataset(fname):
+    #FF
+    f = open(fname)
+    cols = f.readline().split()
+    skipcols = 1
+    X = np.loadtxt(f, delimiter="\t", unpack=True, usecols=range(skipcols, len(cols)))
+    y = map(lambda x: 1 if x == '1' else 0, cols[skipcols:])
+    y = np.array(y)
+    X_label = np.genfromtxt(fname, skip_header=1, delimiter="\t", usecols=[0], dtype='str')
+    return X, y, X_label
+
+#python
+def inverse_dict(aDict):
+    return {v: k for k, v in aDict.items()}
 def rand_set(the_list, n_samples):
     import random
     random.shuffle(the_list)
-    return the_list[0:n_samples]
+    return the_list[0:n_samples]    
+
+
+    
+  
 
 
 
-
-
+#sklearn helpers
 def run_clf(clf, skf, M, labels):
     acc= []
     for tr,tst in skf: 
@@ -108,17 +101,30 @@ def run_clf(clf, skf, M, labels):
         acc.append(accuracy_score(clf.predict(M[tst]),labels[tst]))
     return acc
 
+    
+#std format    
+def get_top_features_and_values(clf, n_top):
+    return ( [ (x,clf.feature_importances_[x]) for
+            x in clf.feature_importances_.argsort()[-n_top:][::-1]])
+def top_important_features(clf, feature_names, num_features=20):
+    #FF
+    if not hasattr(clf, "feature_importances_"):
+        return
+    fi = clf.feature_importances_
+    features = [ (f, n) for f, n in zip(fi, feature_names)]
+    top = sorted(features, key=lambda f:f[0], reverse=True)[:num_features]
+    return top
+
+#exp helpers    
 def avg_acc_on_subset(clf,skf,M,labels,n):
     sub = rand_set(range(M.shape[0]),n)
     skf = StratifiedKFold(labels[sub], n_folds=5)
     return np.average(run_clf(clf,skf, M[sub,:],labels[sub]))    
-    
 def avg_avg_acc_on_subset(clf, skf, M, labels, n, runs):
     acc = []
     for x in range(runs):
         acc.append(avg_acc_on_subset(clf,skf, M,labels,n)) 
     return np.average(acc), np.std(acc)
-   
 def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
     zeros = np.where(labels==0)
     ones = np.where(labels==1)
@@ -130,7 +136,6 @@ def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
         skf = StratifiedKFold(labels[t], n_folds=5)
         acc.append(np.average(run_clf(clf,skf,M[t,:],labels[t])))
     return np.average(acc), np.std(acc)
-    
 def run_subset_exp(clf, M, labels,ranges):
     results = []
     for r in ranges:
@@ -140,7 +145,23 @@ def run_subset_exp(clf, M, labels,ranges):
     return results
     
 
+ 
+# go thru this
+def get_identicle_value_columns(M):
+    col_ids = []
+    for col_id, row in enumerate(M):
+        value = row[0]
+        if np.all(row==value, axis=1): # 1 for columns
+            col_ids.append(col_id)
+    return col_id
+def agreement_fit(data,inv_index,type_one, type_two,count_Yes_No):
+    one = [col_idx for col_idx in range(data.shape[1]) if np.count_nonzero(data[type_one, col_idx])==count_Yes_No[0]]
+    two= [col_idx for col_idx in one if np.count_nonzero(data[type_two,col_idx])==count_Yes_No[1]]
+    return [inv_index[x] for x in two]
+def RES_id_from_SUS_id(SUS_ids, total_num_samples):
+    return [x for x in range(total_num_samples) if x not in SUS_ids]
     
+     
     
     
     
