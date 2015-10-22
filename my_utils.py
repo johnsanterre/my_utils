@@ -1,12 +1,11 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 import numpy as np
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-import numpy as np
+import matplotlib.pyplot as plt
 import csv
+
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
 
 
 low_ranges = [10,20,30,40,50,60,70,80,90,100]    
