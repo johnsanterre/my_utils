@@ -70,16 +70,9 @@ def print_dlod_subset_keys(dlod, k, header='name,desc,latitude,longitude',
         print ts % tuple([str(entry[x]) for x in keys])
     return
 
-import pdb; pdb.set_trace()
-def superset_of_keys():
+def superset_of_keys(t):
     # takes lod, or dlod
     return
-def superset_of_items_by_key():
+def superset_of_items_by_key(t):
     # takes lod, or dlod
     return
-def cnt_by_key(D, k):
-    return Counter(get_all(k, D))[True]
-def not_l_or_d(v):
-    return type(var) != dict or type(var) != list
-def is_dict(D):
-    return type(var) == dict
