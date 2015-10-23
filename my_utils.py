@@ -83,10 +83,6 @@ def rand_set(the_list, n_samples):
     random.shuffle(the_list)
     return the_list[0:n_samples]
 
-
-
-
-
 def run_clf(clf, skf, M, labels):
     acc= []
     for tr,tst in skf: 
@@ -119,6 +115,6 @@ def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
 
 r = [20,50,100,200,400,800,1600]
     
-    
+
     
     
