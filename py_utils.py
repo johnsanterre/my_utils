@@ -70,7 +70,7 @@ def print_dlod_subset_keys(dlod, k, header='name,desc,latitude,longitude',
         print ts % tuple([str(entry[x]) for x in keys])
     return
 
-def load_json(floc):
+def load_json(f_loc):
     import json
     with open(f_loc) as f:
         data =[json.loads(x) for x in list(f)]
