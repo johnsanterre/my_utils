@@ -163,5 +163,17 @@ def RES_id_from_SUS_id(SUS_ids, total_num_samples):
     
      
     
-    
-    
+std_clfs = [#{'clf': AdaBoostClassifier, 'n_estimators': [20,50,100]},
+            {'clf': RandomForestClassifier,
+             'n_estimators': [10,30,50],
+             'max_features': ['sqrt','log2'],
+             'max_depth': [None,4,7,15],
+             'n_jobs':[1]}#,
+            #{'clf': LogisticRegression,
+             #'C': [1.0,2.0,0.5,0.25],
+             #'penalty': ['l1','l2']},
+            #{'clf': DecisionTreeClassifier,
+            # 'max_depth': [None,4,7,15,25]},
+            #{'clf': DummyClassifier,
+            # 'strategy': ['stratified','most_frequent','uniform']}]
+cvs = [{'cv': StratifiedKFold}]
