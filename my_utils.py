@@ -168,7 +168,7 @@ rf_sweep = {'clf': RandomForestClassifier,
              'max_depth': [None,4,7,15],
              'n_jobs':[1]}
 ad_sweep = {'clf': AdaBoostClassifier, 'n_estimators': [20,50,100]}
-lr_sweep = {'clf': LogisticRegression, 'C': [1.0,2.0,0.5,0.25], 'penalty': ['l1','l2']}
+#lr_sweep = {'clf': LogisticRegression, 'C': [1.0,2.0,0.5,0.25], 'penalty': ['l1','l2']}
 dc_tree = {'clf': DecisionTreeClassifier, 'max_depth': [None,4,7,15,25]},
 
 std_clf= [rf_sweep]
