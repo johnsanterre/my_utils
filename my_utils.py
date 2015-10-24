@@ -158,22 +158,18 @@ def agreement_fit(data,inv_index,type_one, type_two,count_Yes_No):
     one = [col_idx for col_idx in range(data.shape[1]) if np.count_nonzero(data[type_one, col_idx])==count_Yes_No[0]]
     two= [col_idx for col_idx in one if np.count_nonzero(data[type_two,col_idx])==count_Yes_No[1]]
     return [inv_index[x] for x in two]
+    
 def RES_id_from_SUS_id(SUS_ids, total_num_samples):
     return [x for x in range(total_num_samples) if x not in SUS_ids]
     
-     
-    
-std_clfs = [#{'clf': AdaBoostClassifier, 'n_estimators': [20,50,100]},
-            {'clf': RandomForestClassifier,
+rf_sweep = {'clf': RandomForestClassifier,
              'n_estimators': [10,30,50],
              'max_features': ['sqrt','log2'],
              'max_depth': [None,4,7,15],
-             'n_jobs':[1]}]#,
-            #{'clf': LogisticRegression,
-             #'C': [1.0,2.0,0.5,0.25],
-             #'penalty': ['l1','l2']},
-            #{'clf': DecisionTreeClassifier,
-            # 'max_depth': [None,4,7,15,25]},
-            #{'clf': DummyClassifier,
-            # 'strategy': ['stratified','most_frequent','uniform']}]
+             'n_jobs':[1]}
+ad_sweep = {'clf': AdaBoostClassifier, 'n_estimators': [20,50,100]}
+lr_sweep = {'clf': LogisticRegression, 'C': [1.0,2.0,0.5,0.25], 'penalty': ['l1','l2']}
+dc_tree = {'clf': DecisionTreeClassifier, 'max_depth': [None,4,7,15,25]},
+
+std_clf= [rf_sweep]
 cvs = [{'cv': StratifiedKFold}]
