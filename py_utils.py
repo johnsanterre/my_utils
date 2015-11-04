@@ -4,7 +4,7 @@ from collections import Counter
 #    lod -> list of dicts
 #    dod -> dic of dicts
 #   dlod -> dic of lod
-#      D -> data = i.e. undetermined type
+#   data -> i.e. undetermined type
 #      s -> string
 
 # assumption is that there are two basic data types a dlod and a dod.
@@ -14,15 +14,15 @@ tmp_lod = [dict(fake_key='f1', A='a1', B='b1'),
            dict(fake_key='f3', A='a3', B='b3'),
            dict(fake_key='f4', A='a4', B='b4')]
 
-def search_types(D):
+def search_types(data):
     # not tested
     # change to include type leaf nodes ?
     # assumes all entries are same type and depth is equal
-    if type(D) in [list, dict, tuple]:
-        if type(D) == dict:
-            return str(type(D)) + search_types(D[D.keys()[0]])
+    if type(data) in [list, dict, tuple]:
+        if type(data) == dict:
+            return str(type(data)) + search_types(data[data.keys()[0]])
         else:
-            return str(type(D)) + search_types(D[0])
+            return str(type(data)) + search_types(data[0])
     return ''
 def cast_to_short_cuts(s):
     # are these all reasonable types?
@@ -37,11 +37,11 @@ def cast_to_short_cuts(s):
     elif "<type 'dict'><type 'list'><type 'dict'>" == s:
         return 'dod'
     return 'error'
-def check(D):
-    return cast_to_short_cuts(search_types(D))
+def check(data):
+    return cast_to_short_cuts(search_types(data))
 def unique_values_from_d_in_lod_by_key(lod, s, verbose=False):
     # test
-    # type D?
+    # type data?
     # lod = lod?
     # make a list of unique items
     v = set([d[s] for d in lod])
@@ -61,7 +61,7 @@ def get(dod, key):
 def cnt_by_key(dod, k):
     return Counter(get(dod,k))[True]
 def print_dlod_subset_keys(dlod, k, header='name,desc,latitude,longitude',
-                                    keys=['date','latitude','longitude']):
+                           keys=['date', 'latitude', 'longitude']):
     if keys == None:
         keys = dlod.keys()
     ts = ",".join(['%s' for x in range(len(keys))])
@@ -69,13 +69,11 @@ def print_dlod_subset_keys(dlod, k, header='name,desc,latitude,longitude',
     for entry in dlod[k]:
         print ts % tuple([str(entry[x]) for x in keys])
     return
-
 def load_json(f_loc):
     import json
     with open(f_loc) as f:
         data =[json.loads(x) for x in list(f)]
     return data
-
 def superset_of_keys(t):
     # takes lod, or dlod
     return
