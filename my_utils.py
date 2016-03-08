@@ -9,7 +9,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import accuracy_score, auc, f1_score, precision_score, recall_score, roc_curve
-
+#supress Scientific Notation
+np.set_printoptions(suppress=True)
 
 #Vars
 low_ranges = [10,20,30,40,50,60,70,80,90,100]    
