@@ -11,7 +11,8 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import accuracy_score, auc, f1_score, precision_score, recall_score, roc_curve
 #supress Scientific Notation
 np.set_printoptions(suppress=True)
-
+np.set_printoptions(linewidth=300)
+np.set_printoptions(edgeitems=6)
 #Vars
 low_ranges = [10,20,30,40,50,60,70,80,90,100]    
 mid_ranges = [100,150,200,250,300,350,400,450,500]
