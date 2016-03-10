@@ -1,39 +1,45 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
-
-
-from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import accuracy_score, auc, f1_score, precision_score, recall_score, roc_curve
+from sklearn.linear_model import LinearRegression
+from scipy.stats import rankdata
+from collections import Counter
+
 #supress Scientific Notation
 np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=6)
+
 #Vars
-low_ranges = [10,20,30,40,50,60,70,80,90,100]    
-mid_ranges = [100,150,200,250,300,350,400,450,500]
-high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
+#low_ranges = [10,20,30,40,50,60,70,80,90,100]    
+#mid_ranges = [100,150,200,250,300,350,400,450,500]
+#high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
 
 
 
 #System level helpers
 def pickle_this(obj, f_loc='cucumber.pickle'):
     import pickle
-    with open(f_loc, 'wb') as handle:  pickle.dump(obj, handle)
+    with open(f_loc, 'wb') as handle:  
+        pickle.dump(obj, handle)
     return
+
 def unpickle(f_loc='cucumber.pickle'):
     import pickle    
     return pickle.load( open( f_loc,'rb'))
 def run_bash(bashCommand):
     import subprocess
     process = subprocess.Popen(bashCommand.split())
+
 def isfile(f_loc):
     import os.path
     return os.path.isfile(f_loc)
+
 def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/my_utils/master/my_utils.py'):
     #snake eating itself
     import urllib2; 
@@ -43,8 +49,10 @@ def import_file_from_url(f_loc='https://raw.githubusercontent.com/johnsanterre/m
 #Rick's group fucntions
 def kmc_wrapper(k='-k25', m='-m8', f='-fm', origin='./', out='./NA.res', work='work-dir'):
     return ' '.join(['./kmc',k, m, f, origin, out, work])
+
 def kmc_dump_wrapper(c='-cx0', origin='NA.res', out='./output',):
     return ' '.join(['./kmc_dump', c, origin, out])
+
 def remove_singletons_from_M(M,index):
     singleton_locations = np.where(sum(M[:,]==1))[0]
     good_loc = list(set(range(M.shape[1]))-set(singleton_locations))
@@ -53,6 +61,7 @@ def remove_singletons_from_M(M,index):
     index_out = {}
     for idx, loc in enumerate(good_loc): M_out[:,idx]=M[:,loc]; index_out[idx]=inv_index[loc]
     return M_out, index_out
+
 def make_labels(pos, neg):
     return np.concatenate((np.ones(neg),(np.ones(pos)+np.ones(pos))))
 
