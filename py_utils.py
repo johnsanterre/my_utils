@@ -2,6 +2,7 @@ from collections import Counter
 
 #    lol -> list of lists
 #    lod -> list of dicts
+#    lot -> list of tuples
 #    dod -> dic of dicts
 #   dlod -> dic of lod
 #   data -> i.e. undetermined type
@@ -54,6 +55,7 @@ def convert_lod_to_dlod_by_key(lod, key):
     for v in values:
         a_dict[v] = [x for x in lod if x[key] == v]
     return a_dict
+    
 def get(dod, key):
     # test
     # type check dod ?

@@ -53,6 +53,7 @@ def remove_singletons_from_M(M,index):
     return M_out, index_out
 def make_labels(pos, neg):
     return np.concatenate((np.ones(neg),(np.ones(pos)+np.ones(pos))))
+
 def open_a_fangFang(loc, delim):
     import csv
     with open(loc, 'rb') as f:
