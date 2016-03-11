@@ -66,19 +66,21 @@ def make_labels(pos, neg):
     return np.concatenate((np.ones(neg),(np.ones(pos)+np.ones(pos))))
 
 def open_a_fangFang(loc, delim):
-    import csv
     with open(loc, 'rb') as f:
         reader = csv.reader(f, delimiter=delim)
         data = list(reader)
     index = {}
     inv_index = {}
+    labels = data[0][1:]
+    data = data[1:]
+    
     for idx, x in enumerate(data):
         index[x[0]]=idx
         inv_index[idx]=x[0]
-    data = np.transpose(np.array([x[1:] for x in data], dtype=(np.int16))) #removes featureID
-    M = data[:,1:]
-    labels = data[:,0]
-    return M, labels, index, inv_index
+        
+    data = np.transpose(np.array([x[1:] for x in data], dtype=(np.int16)))
+    
+    return data, labels, index, inv_index
     
 def read_dataset(fname):
     #FF
