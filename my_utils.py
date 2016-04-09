@@ -29,6 +29,8 @@ import difflib
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
+def matrix_to_binary_indicator_matrix(M)
+    return  (M>0).astype(int)
 
 def remove_duplicate_columns(M):
     return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
