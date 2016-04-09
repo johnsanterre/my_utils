@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -13,14 +14,45 @@ from collections import Counter
 #supress Scientific Notation
 np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
-np.set_printoptions(edgeitems=6)
+np.set_printoptions(edgeitems=100)
+
+import difflib
 
 #Vars
 #low_ranges = [10,20,30,40,50,60,70,80,90,100]    
 #mid_ranges = [100,150,200,250,300,350,400,450,500]
 #high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
 
+#run a python prompt to enter multi line python code
+# !import code; code.interact(local=vars())
 
+#transpose row/columns
+#M[:,[0, 1]] = M[:,[1, 0]]
+
+def move_row_column_in_symetrical_matrix(M, a,b):
+    #move row and column index a to row and column index b
+    M[:,[a, b]] = M[:,[b, a]]
+    M[[a, b],:] = M[[b, a],:]
+    return M
+
+def remove_all_zero_columns(M):
+    return M[:,np.nonzero(np.argmax(M, axis=0))[0]]
+
+def get_max_val_by_row(M):
+    return np.argmax(M, axis=1)
+
+def get_max_val_by_column(M):
+    return np.argmax(M, axis=0)
+
+def distance_in_sequences(a,b):
+    seq = difflib.SequenceMatcher(a=a, b=b)
+    return seq.ratio()
+
+def feature_matrix_from_clf(clf):    
+    M = []
+    for est in clf.estimators_: 
+        M.append(est.tree_.compute_feature_importances())
+    return np.array(M)
 
 #System level helpers
 def pickle_this(obj, f_loc='cucumber.pickle'):
