@@ -29,6 +29,10 @@ import difflib
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
+
+def remove_duplicate_columns(M):
+    return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
+
 def move_row_column_in_symetrical_matrix(M, a,b):
     #move row and column index a to row and column index b
     M[:,[a, b]] = M[:,[b, a]]
