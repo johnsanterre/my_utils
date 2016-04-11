@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+
+from itertools import product
+from collections import Counter
+
 from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -9,39 +13,61 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import accuracy_score, auc, f1_score, precision_score, recall_score, roc_curve
 from sklearn.linear_model import LinearRegression
 from scipy.stats import rankdata
-from collections import Counter
+import difflib
 
 #supress Scientific Notation
 np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
-import difflib
+def setup_for_HR(clf, M, labels):
+    MM = remove_duplicate_columns(M)
+    clf.fit(MM,labels)
+    feature_matrix = feature_matrix_from_clf(clf)
+    all_idx = list(set([y for z in feature_matrix for x in  np.nonzero(z) for y in x]))
+    all_idx.sort()
+    return clf, feature_matrix, all_idx
 
-#Vars
-#low_ranges = [10,20,30,40,50,60,70,80,90,100]    
-#mid_ranges = [100,150,200,250,300,350,400,450,500]
-#high_ranges = [500,800, 1100,1400, 1700, 2000, 2300, 2600]
-
-#run a python prompt to enter multi line python code
-# !import code; code.interact(local=vars())
+def run_multi_line():
+    !import code; code.interact(local=vars())
 
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
+def get_top_features(clf, top_n):
+    val = []
+    loc = []
+    test = clf.feature_importances_
+    index = []
+    for x in range(top_n):
+        val.append(max(test))
+        loc.append(np.where(test==max(test))[0][0])
+        test = np.delete(test, loc[-1])
+    for v in val:
+        if v != 0:
+            index.append(np.where(clf.feature_importances_==v)[0])
+    
+    idx = [x[0][0] for x in index] #test this
+    return val, idx
+
+#Numpy matrix manipuation funcitons
 def matrix_to_binary_indicator_matrix(M):
+    #example:
     return  (M>0).astype(int)
 
 def remove_duplicate_columns(M):
+    #removes identical columns to shirnk the size of a matrix. 
+    #example:
     return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
 
-def move_row_column_in_symetrical_matrix(M, a,b):
+def move_row_column_in_symetrical_matrix(M,a,b):
     #move row and column index a to row and column index b
     M[:,[a, b]] = M[:,[b, a]]
     M[[a, b],:] = M[[b, a],:]
     return M
 
 def remove_all_zero_columns(M):
+    #example:
     return M[:,np.nonzero(np.argmax(M, axis=0))[0]]
 
 def get_max_val_by_row(M):
@@ -54,7 +80,8 @@ def distance_in_sequences(a,b):
     seq = difflib.SequenceMatcher(a=a, b=b)
     return seq.ratio()
 
-def feature_matrix_from_clf(clf):    
+def feature_matrix_from_clf(clf):
+    #example:    
     M = []
     for est in clf.estimators_: 
         M.append(est.tree_.compute_feature_importances())
@@ -70,6 +97,7 @@ def pickle_this(obj, f_loc='cucumber.pickle'):
 def unpickle(f_loc='cucumber.pickle'):
     import pickle    
     return pickle.load( open( f_loc,'rb'))
+
 def run_bash(bashCommand):
     import subprocess
     process = subprocess.Popen(bashCommand.split())
@@ -158,6 +186,7 @@ def run_clf(clf, skf, M, labels):
 def get_top_features_and_values(clf, n_top):
     return ( [ (x,clf.feature_importances_[x]) for
             x in clf.feature_importances_.argsort()[-n_top:][::-1]])
+
 def top_important_features(clf, feature_names, num_features=20):
     #FF
     if not hasattr(clf, "feature_importances_"):
@@ -172,11 +201,13 @@ def avg_acc_on_subset(clf,skf,M,labels,n):
     sub = rand_set(range(M.shape[0]),n)
     skf = StratifiedKFold(labels[sub], n_folds=5)
     return np.average(run_clf(clf,skf, M[sub,:],labels[sub]))    
+
 def avg_avg_acc_on_subset(clf, skf, M, labels, n, runs):
     acc = []
     for x in range(runs):
         acc.append(avg_acc_on_subset(clf,skf, M,labels,n)) 
     return np.average(acc), np.std(acc)
+
 def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
     zeros = np.where(labels==0)
     ones = np.where(labels==1)
@@ -188,6 +219,7 @@ def avg_avg_acc_on_balanced_subset(clf,M,labels,n,runs):
         skf = StratifiedKFold(labels[t], n_folds=5)
         acc.append(np.average(run_clf(clf,skf,M[t,:],labels[t])))
     return np.average(acc), np.std(acc)
+
 def run_subset_exp(clf, M, labels,ranges):
     results = []
     for r in ranges:
@@ -195,8 +227,6 @@ def run_subset_exp(clf, M, labels,ranges):
         tmp_results.append(avg_avg_acc_on_balanced_subset(clf,M,labels,r,10))
         results.append(tmp_results)
     return results
-    
-
  
 # go thru this
 def get_identicle_value_columns(M):
