@@ -37,8 +37,8 @@ def rank_agg_value(feature_matrix, rank_agg_idx):
     for i, row in enumerate(feature_matrix):
         locs = np.nonzero(row)[0]
         for combo in product(locs, repeat=2):
-            zero = rank_agg_idx.index(combo[0])
-            one = rank_agg_idx.index(combo[1])
+            zero = np.where(rank_agg_idx==combo[0])[0]
+            one = np.where(rank_agg_idx==combo[1])[0]
             Y[zero,one] += row[combo[0]]-row[combo[1]]
             weight[zero,one] +=1
         print i
