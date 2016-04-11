@@ -28,7 +28,10 @@ def setup_for_HR(clf, M, labels):
     all_idx.sort()
     return clf, feature_matrix, all_idx
 
-
+def rank_index_tuples(s):
+    return sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])        
+        
+    
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
