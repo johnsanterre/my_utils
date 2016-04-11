@@ -28,7 +28,7 @@ def setup_for_HR(clf, M, labels):
     all_idx.sort()
     return clf, feature_matrix, all_idx
 
-#!import code; code.interact(local=vars())
+
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
