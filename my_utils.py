@@ -30,7 +30,19 @@ def setup_for_HR(clf, M, labels):
 
 def rank_index_tuples(s):
     return sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])        
-        
+
+def rank_agg_value(feature_matrix, rank_agg_idx):
+    Y = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
+    weight = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
+    for i, row in enumerate(feat_M):
+        locs = np.nonzero(row)[0]
+        for combo in product(locs, repeat=2):
+            zero = rank_agg_idx.index(combo[0])
+            one = rank_agg_idx.index(combo[1])
+            Y[zero,one] += row[combo[0]]-row[combo[1]]
+            weight[zero,one] +=1
+        print i
+    return Y, weight    
     
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
