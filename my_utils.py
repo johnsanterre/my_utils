@@ -29,7 +29,7 @@ def setup_for_HR(clf, M, labels):
     return clf, feature_matrix, all_idx
 
 def run_multi_line():
-    !import code; code.interact(local=vars())
+    #!import code; code.interact(local=vars())
 
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
