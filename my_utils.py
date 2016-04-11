@@ -34,7 +34,7 @@ def rank_index_tuples(s):
 def rank_agg_value(feature_matrix, rank_agg_idx):
     Y = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
     weight = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
-    for i, row in enumerate(feat_M):
+    for i, row in enumerate(feature_matrix):
         locs = np.nonzero(row)[0]
         for combo in product(locs, repeat=2):
             zero = rank_agg_idx.index(combo[0])
@@ -43,7 +43,13 @@ def rank_agg_value(feature_matrix, rank_agg_idx):
             weight[zero,one] +=1
         print i
     return Y, weight    
-    
+
+def hodgeRank(Y, weight):
+    W = weight
+    L = -W
+    L = L + np.diag(sum(W))
+    s = np.diag(np.dot(Y,W.T))
+    return s
 #transpose row/columns
 #M[:,[0, 1]] = M[:,[1, 0]]
 
