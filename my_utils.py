@@ -20,6 +20,9 @@ np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
+def convert_ordered_ranks_HR(sss):
+    return [(x,rank_agg_idx[y]) for x, y in sss]
+
 def setup_for_HR(clf, M, labels):
     MM = remove_duplicate_columns(M)
     clf.fit(MM,labels)
@@ -149,6 +152,21 @@ def remove_singletons_from_M(M,index):
 
 def make_labels(pos, neg):
     return np.concatenate((np.ones(neg),(np.ones(pos)+np.ones(pos))))
+
+def read_fasta(floc):
+    #assumes well structured, ie no error checking. h
+    with open('all.fasta', 'rb') as f:
+            reader = csv.reader(f,delimiter='\t')
+            data = list(reader)
+    all_fasta={}
+    for row in data:    
+        if row[0][0]=='>':
+            peg, func = row[0][1:].split(' ',1)
+            all_fasta[peg]={'function':func}
+            all_fasta[peg]={'protein':''}
+        else:
+            all_fasta[peg]['protein'] +=row[0]
+    return row
 
 def open_a_fangFang(loc, delim):
     with open(loc, 'rb') as f:
