@@ -20,6 +20,13 @@ np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
+#!import code; code.interact(local=vars())
+
+def range_datetime(base, numdays):
+    return [base - datetime.timedelta(days=x) for x in range(0, numdays)]
+    
+
+
 def convert_ordered_ranks_HR(sss):
     return [(x,rank_agg_idx[y]) for x, y in sss]
 
