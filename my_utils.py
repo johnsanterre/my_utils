@@ -1,6 +1,8 @@
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+
 
 from itertools import product
 from collections import Counter
@@ -16,16 +18,24 @@ from scipy.stats import rankdata
 import difflib
 
 #supress Scientific Notation
+np.set_printoptions(precision=2)
 np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
+
+def percent_nonzero(M):
+  return  len(np.nonzero(M)[0])/float(np.multiply(*M.shape))
+  
 #!import code; code.interact(local=vars())
 
 def range_datetime(base, numdays):
     return [base - datetime.timedelta(days=x) for x in range(0, numdays)]
     
-
+def save_session(floc='history.txt'):
+    #overrights pevious history
+    import readline
+    readline.write_history_file(floc)
 
 def convert_ordered_ranks_HR(sss):
     return [(x,rank_agg_idx[y]) for x, y in sss]
@@ -36,12 +46,13 @@ def setup_for_HR(clf, M, labels):
     feature_matrix = feature_matrix_from_clf(clf)
     all_idx = list(set([y for z in feature_matrix for x in  np.nonzero(z) for y in x]))
     all_idx.sort()
+    all_index={idx:x for idx,x in enumerate(all_index)}
     return clf, feature_matrix, all_idx
 
 def rank_index_tuples(s):
     return sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])        
 
-def rank_agg_value(feature_matrix, rank_agg_idx):
+def get_Y_weight(feature_matrix, rank_agg_idx):
     Y = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
     weight = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
     for i, row in enumerate(feature_matrix):
