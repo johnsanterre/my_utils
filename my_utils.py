@@ -23,8 +23,8 @@ np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
-def generate_rf_trees(data, labels):
-  clf = RandomForestClassifier(n_estimators=1000)
+def generate_rf_trees(data, labels, n_estimators=10, n_jobs=5):
+  clf = RandomForestClassifier(n_estimators=n_estimators)
   clf.fit(data, labels)
   return [est.tree_.compute_feature_importances() for est in clf.estimators_]
 
