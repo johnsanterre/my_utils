@@ -23,6 +23,19 @@ np.set_printoptions(suppress=True)
 np.set_printoptions(linewidth=300)
 np.set_printoptions(edgeitems=100)
 
+def generate_rf_trees(data, labels):
+  clf = RandomForestClassifier(n_estimators=1000)
+  clf.fit(data, labels)
+  return [est.tree_.compute_feature_importances() for est in clf.estimators_]
+
+def reverse_rank(x):
+  return (len(x)+1) - rankdata(x).astype(int)
+
+def convert_real_value_matrix_to_row_ranking_matrix(M):
+  rM = np.zeros(shape=M.shape)
+  for idx,x in enumerate(M):
+    rM[idx] = reverse_rank(x)
+  return rM
 
 def percent_nonzero(M):
   return  len(np.nonzero(M)[0])/float(np.multiply(*M.shape))
@@ -40,26 +53,33 @@ def save_session(floc='history.txt'):
 def convert_ordered_ranks_HR(sss):
     return [(x,rank_agg_idx[y]) for x, y in sss]
 
-def setup_for_HR(clf, M, labels):
-    MM = remove_duplicate_columns(M)
-    clf.fit(MM,labels)
-    feature_matrix = feature_matrix_from_clf(clf)
-    all_idx = list(set([y for z in feature_matrix for x in  np.nonzero(z) for y in x]))
+def setup_for_HR(clf_on_mM, M, labels):
+    mM = remove_duplicate_columns(M)
+    clf_on_mM.fit(mM,labels)
+    tM = feature_matrix_from_clf(clf)
+    all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
     all_idx.sort()
-    all_index={idx:x for idx,x in enumerate(all_index)}
-    return clf, feature_matrix, all_idx
+    all_idx={idx:x for idx,x in enumerate(all_idx)}
+    return clf_on_mM, mM, tM
 
-def rank_index_tuples(s):
-    return sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])        
+def rank_index_value_tuples(s):
+    rank_index= sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0]) 
+    ret = {}
+    for idx,x in enumerate(rank_index):
+      ret[x[0]] ={'loc':x[1], 'val':s[x[1]]}
+    # {idx:{'loc':x, 'val':s[x]} for idx,x in enumerate(rank_index)}
+    return ret
 
-def get_Y_weight(feature_matrix, rank_agg_idx):
-    Y = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
-    weight = np.zeros(shape=(len(rank_agg_idx),len(rank_agg_idx)))
-    for i, row in enumerate(feature_matrix):
+def get_Y_weight(tM):
+    none_zero_list = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
+    none_zero_list.sort()
+    Y = np.zeros(shape=(len(none_zero_list),len(none_zero_list)))
+    weight = np.zeros(shape=(len(none_zero_list),len(none_zero_list)))
+    for i, row in enumerate(tM):
         locs = np.nonzero(row)[0]
         for combo in product(locs, repeat=2):
-            zero = np.where(rank_agg_idx==combo[0])[0]
-            one = np.where(rank_agg_idx==combo[1])[0]
+            zero = np.where(none_zero_list==combo[0])[0]
+            one = np.where(none_zero_list==combo[1])[0]
             Y[zero,one] += row[combo[0]]-row[combo[1]]
             weight[zero,one] +=1
         print i
@@ -140,7 +160,7 @@ def unpickle(f_loc='cucumber.pickle'):
 
 def run_bash(bashCommand):
     import subprocess
-    process = subprocess.Popen(bashCommand.split())
+    process = subprocess.open(bashCommand.split())
 
 def isfile(f_loc):
     import os.path
