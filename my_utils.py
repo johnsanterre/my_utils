@@ -149,6 +149,14 @@ def feature_matrix_from_clf(clf):
     return np.array(M)
 
 #System level helpers
+def pickle_this_datetime(obj, f_loc):
+  import pickle
+  end = str(datetime.datetime.now())
+  f_loc = f_loc + '_' + end
+  with open(f_loc, 'wb') as handle:  
+      pickle.dump(obj, handle)
+  return
+  
 def pickle_this(obj, f_loc='cucumber.pickle'):
     import pickle
     with open(f_loc, 'wb') as handle:  
