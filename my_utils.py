@@ -134,10 +134,10 @@ def matrix_to_binary_indicator_matrix(M):
     #example:
     return  (M>0).astype(int)
 
-def remove_duplicate_columns(M):
-    #removes identical columns to shirnk the size of a matrix.
-    #example:
-    return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
+#def remove_duplicate_columns(M):
+#    #removes identical columns to shirnk the size of a matrix.
+#    #example:
+#    return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
 
 def move_row_column_in_symetrical_matrix(M,a,b):
     #move row and column index a to row and column index b
