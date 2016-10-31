@@ -72,14 +72,14 @@ def get_postion_of_feature_in_trees(data, featureid):
 def convert_ordered_ranks_HR(sss):
     return [(x,rank_agg_idx[y]) for x, y in sss]
 
-def setup_for_HR(clf_on_mM, M, labels):
-    mM = remove_duplicate_columns(M)
-    clf_on_mM.fit(mM,labels)
-    tM = feature_matrix_from_clf(clf)
-    all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
-    all_idx.sort()
-    all_idx={idx:x for idx,x in enumerate(all_idx)}
-    return clf_on_mM, mM, tM
+#def setup_for_HR(clf_on_mM, M, labels):
+#    mM = remove_duplicate_columns(M)
+#    clf_on_mM.fit(mM,labels)
+#    tM = feature_matrix_from_clf(clf)
+#    all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
+#    all_idx.sort()
+#    all_idx={idx:x for idx,x in enumerate(all_idx)}
+#    return clf_on_mM, mM, tM
 
 def rank_index_value_tuples(s):
     rank_index= sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])
