@@ -72,14 +72,14 @@ def get_postion_of_feature_in_trees(data, featureid):
 def convert_ordered_ranks_HR(sss):
     return [(x,rank_agg_idx[y]) for x, y in sss]
 
-#def setup_for_HR(clf_on_mM, M, labels):
-#    mM = remove_duplicate_columns(M)
-#    clf_on_mM.fit(mM,labels)
-#    tM = feature_matrix_from_clf(clf)
-#    all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
-#    all_idx.sort()
-#    all_idx={idx:x for idx,x in enumerate(all_idx)}
-#    return clf_on_mM, mM, tM
+def setup_for_HR(clf_on_mM, M, labels):
+    mM = remove_duplicate_columns(M)
+    clf_on_mM.fit(mM,labels)
+    tM = feature_matrix_from_clf(clf)
+    all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
+    all_idx.sort()
+    all_idx={idx:x for (idx,x) in enumerate(all_idx)}
+    return clf_on_mM, mM, tM
 
 def rank_index_value_tuples(s):
     rank_index= sorted(zip((len(s)+1-rankdata(s)), range(len(s))), key=lambda x: x[0])
@@ -135,9 +135,9 @@ def matrix_to_binary_indicator_matrix(M):
     return  (M>0).astype(int)
 
 #def remove_duplicate_columns(M):
-#    #removes identical columns to shirnk the size of a matrix.
-#    #example:
-#    return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
+    #removes identical columns to shirnk the size of a matrix.
+    #example:
+    return np.array(list({tuple(M[:,x]) for x in range(len(M[0]))})).T
 
 def move_row_column_in_symetrical_matrix(M,a,b):
     #move row and column index a to row and column index b
@@ -263,7 +263,7 @@ def read_dataset(fname):
 
 #python
 def inverse_dict(aDict):
-    return {v: k for k, v in aDict.items()}
+    return {v: k for (k, v) in aDict.items()}
 def rand_set(the_list, n_samples):
     import random
     random.shuffle(the_list)
