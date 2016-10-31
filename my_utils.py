@@ -78,7 +78,7 @@ def setup_for_HR(clf_on_mM, M, labels):
     tM = feature_matrix_from_clf(clf)
     all_idx = list(set([y for z in tM for x in  np.nonzero(z) for y in x]))
     all_idx.sort()
-    all_idx={idx:x for (idx,x) in enumerate(all_idx)}
+    all_idx=dict((idx,x) for (idx,x) in enumerate(all_idx)}
     return clf_on_mM, mM, tM
 
 def rank_index_value_tuples(s):
@@ -263,7 +263,7 @@ def read_dataset(fname):
 
 #python
 def inverse_dict(aDict):
-    return {v: k for (k, v) in aDict.items()}
+    return dict((v, k) for (k, v) in aDict.items())
 def rand_set(the_list, n_samples):
     import random
     random.shuffle(the_list)
